@@ -5,7 +5,7 @@ This repository hosts a comprehensive Machine Learning pipeline designed to supp
 ---
 
 ## The "Clinical Integrity" Angle 
-> **Author's Note:** Leveraging my background in **Cognitive Neuroscience**, I approached this clinical dataset not just as rows of data, but as dynamic patient profiles. In medical diagnostics, a model is only as good as its generalizability; for this reason, I prioritized **clinical integrity over pure metric-chasing**. By validating a Baseline LightGBM over a fine-tuned version, I ensured a model that avoids overfitting and remains grounded in medical reality. My focus was to bridge the gap between "black-box" algorithms and transparent, SHAP-driven insights that clinicians can actually trust.
+> **Author's Note:** Leveraging my background in **Cognitive Neuroscience**, I approached this clinical dataset not just as rows of data, but as dynamic patient profiles. In medical diagnostics, a model is only as good as its generalizability; for this reason, I prioritized **clinical integrity over pure metric-chasing**. By **validating** a Baseline LightGBM over a **fine-tuned** version, I ensured a model that avoids overfitting and remains grounded in medical reality. My focus was to bridge the gap between "black-box" algorithms and transparent, SHAP-driven insights that clinicians can actually trust.
 
 ---
 
@@ -13,11 +13,16 @@ This repository hosts a comprehensive Machine Learning pipeline designed to supp
 
 The project is structured into four specialized phases:
 
-1.  **Exploratory Data Analysis (EDA):** Identifying demographic biases and addressing the significant class imbalance (Demented vs. Non-Demented).
-2.  **Model Benchmarking:** Comparative analysis of ensemble architectures (Random Forest, XGBoost, CatBoost). **LightGBM** emerged as the champion for its balance of precision and clinical utility.
-3.  **Validation & Interpretation:** A critical phase where the **Baseline model** was selected over fine-tuned versions to ensure better generalization. Implementation of **SHAP Waterfall plots** for local interpretability.
-4.  **Clinical Dashboard:** Integration of statistical benchmarks (means/modes) to allow real-time comparison of patient profiles against the training population.
+- **Data Analysis:** Identified demographic biases and severe class imbalance in dementia classification (Demented vs Non-Demented)
 
+- **Model Benchmarking:** Evaluated ensemble models (Random Forest, XGBoost, CatBoost, LightGBM) using *AUROC, F1-score, and confusion matrix analysis**.Selected     **LightGBM** for its superior balance between sensitivity and clinical reliability  
+
+- **Model Validation:** Prioritized **baseline model over fine-tuned variant** to reduce overfitting and improve generalization on unseen patient profiles  
+
+- **Explainability:** Applied **SHAP (Waterfall plots)** to provide patient-level interpretability and support clinical decision-making  
+
+- **Output:** Built an interactive dashboard to compare individual patients against population-level statistical benchmarks.
+  
 ## Interactive Live Demo
 
 Experience the diagnostic pipeline through the dedicated Streamlit application. This dashboard allows for real-time risk assessment and feature impact visualization.
