@@ -21,7 +21,7 @@ The project is structured into four specialized phases:
 
 - **Explainability:** Applied **SHAP (Waterfall plots)** to provide patient-level interpretability and support clinical decision-making  
 
-- **Output:**  Selected  **LightGBM** for its superior balance between sensitivity and clinical reliability. Achieving a **94.4% AUC-ROC** and a **93.7% F1-score**, the model effectively **minimized diagnostic errors**, ensuring high predictive power and generalizability on unseen patient data.  **Built an interactive dashboard** to **compare** individual **patients against population-level statistical benchmarks**.
+- **Output:**  Selected  **LightGBM** for its superior balance between sensitivity and clinical reliability. Achieving a **94.4% AUC-ROC** and a **93.7% F1-score**, the model effectively **minimized diagnostic errors**, ensuring **high predictive power and generalizability on unseen patient data**.  Built an interactive **dashboard** to **compare** individual **patients against population-level statistical benchmarks**.
   
 ## Interactive Live Demo
 
