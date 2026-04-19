@@ -15,7 +15,7 @@ The project is structured into four specialized phases:
 
 - **Data Analysis:** Identified demographic biases and severe class imbalance in dementia classification (Demented vs Non-Demented)
 
-- **Model Benchmarking:** Evaluated ensemble models (Random Forest, XGBoost, CatBoost, LightGBM) using *AUROC, F1-score, and confusion matrix analysis**.Selected     **LightGBM** for its superior balance between sensitivity and clinical reliability  
+- **Model Benchmarking:** Evaluated ensemble models (Random Forest, XGBoost, CatBoost, LightGBM) using **AUROC, F1-score, and confusion matrix analysis**.Selected     **LightGBM** for its superior balance between sensitivity and clinical reliability.  
 
 - **Model Validation:** Prioritized **baseline model over fine-tuned variant** to reduce overfitting and improve generalization on unseen patient profiles  
 
