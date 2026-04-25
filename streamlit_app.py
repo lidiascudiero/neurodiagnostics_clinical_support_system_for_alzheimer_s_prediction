@@ -9,42 +9,57 @@ import numpy as np
 # 1. Page Configuration
 st.set_page_config(page_title="Alzheimer's Diagnosis Support", layout="wide")
 
-# 2. Load the Baseline Model (The most robust version)
+# 2. Load the Baseline Model
 @st.cache_resource
 def load_model():
-    # Ensure this filename matches your saved benchmark model
     return joblib.load("best_model_lightgbm.joblib")
 
 pipeline = load_model()
 
 def plot_radar(patient_data, defaults):
-    categories = ['MMSE', 'FunctionalAssessment', 'ADL', 'PhysicalActivity', 'SleepQuality']
+    # Added DietQuality to match clinical profile
+    categories = ['MMSE', 'Functional Assessment', 'ADL', 'Physical Activity', 'Sleep Quality', 'Diet Quality']
     
-    # Normalizzazione rapida per il grafico (valori tra 0 e 1)
-    patient_val = [patient_data['MMSE']/30, patient_data['FunctionalAssessment']/10, 
-                   patient_data['ADL']/10, patient_data['PhysicalActivity']/10, 
-                   patient_data['SleepQuality']/10]
+    # Normalization (MMSE /30, others /10)
+    patient_val = [
+        patient_data['MMSE']/30, 
+        patient_data['FunctionalAssessment']/10, 
+        patient_data['ADL']/10, 
+        patient_data['PhysicalActivity']/10, 
+        patient_data['SleepQuality']/10,
+        patient_data['DietQuality']/10
+    ]
     
-    avg_val = [defaults['MMSE']/30, defaults['FunctionalAssessment']/10, 
-               defaults['ADL']/10, defaults['PhysicalActivity']/10, 
-               defaults['SleepQuality']/10]
+    avg_val = [
+        defaults['MMSE']/30, 
+        defaults['FunctionalAssessment']/10, 
+        defaults['ADL']/10, 
+        defaults['PhysicalActivity']/10, 
+        defaults['SleepQuality']/10,
+        defaults['DietQuality']/10
+    ]
 
     fig = go.Figure()
     fig.add_trace(go.Scatterpolar(r=patient_val, theta=categories, fill='toself', name='Current Patient', line_color='teal'))
     fig.add_trace(go.Scatterpolar(r=avg_val, theta=categories, fill='toself', name='Average Patient', line_color='gray'))
-    fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 1])), showlegend=True, height=400)
+    
+    fig.update_layout(
+        polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
+        showlegend=True, 
+        height=450,
+        margin=dict(l=50, r=50, t=20, b=20)
+    )
     return fig
 
 # 3. App Header
-st.title("🧠 Alzheimer's Disease Prediction Dashboard")
+st.title("Alzheimer's Disease Prediction Dashboard")
 st.markdown("""
 This tool uses a **Baseline LightGBM** model to estimate the probability of Alzheimer's. 
 The model was selected for its high generalization capability and robustness.
 """)
 st.divider()
 
-# 4. Your Calculated Default Values (The "Neutral" Patient)
-# Add 'DoctorInCharge' to your existing defaults dictionary
+# 4. Calculated Default Values
 defaults = {
     'ADL': 4.9545, 
     'Age': 74.9495, 
@@ -81,35 +96,43 @@ defaults = {
     'DoctorInCharge': 'Unknown' 
 }
 
-# 5. User Interface - Sidebar for Key Inputs
-st.sidebar.header(" Primary Risk Factors")
-st.sidebar.info("Adjust these key variables to see how the risk changes.")
+# 5. User Interface - Sidebar
+st.sidebar.header("Primary Clinical Factors")
+st.sidebar.info("These variables have the highest impact on the prediction.")
 
-# Creating sliders for the most influential features
+# High Impact Features (SHAP)
 mmse = st.sidebar.slider("MMSE Score (Cognitive)", 0.0, 30.0, float(defaults['MMSE']))
 func_ast = st.sidebar.slider("Functional Assessment", 0.0, 10.0, float(defaults['FunctionalAssessment']))
 adl = st.sidebar.slider("ADL (Activities of Daily Living)", 0.0, 10.0, float(defaults['ADL']))
 age = st.sidebar.number_input("Patient Age", 60, 90, int(defaults['Age']))
 
-# Binary/Categorical Key Inputs
-memory = st.sidebar.selectbox("Memory Complaints", [0, 1], format_func=lambda x: "Yes" if x==1 else "No")
-behavior = st.sidebar.selectbox("Behavioral Problems", [0, 1], format_func=lambda x: "Yes" if x==1 else "No")
+# Categorical Inputs
+memory = st.sidebar.selectbox("Memory Complaints", [0, 1], index=int(defaults['MemoryComplaints']), format_func=lambda x: "Yes" if x==1 else "No")
+behavior = st.sidebar.selectbox("Behavioral Problems", [0, 1], index=int(defaults['BehavioralProblems']), format_func=lambda x: "Yes" if x==1 else "No")
+
+st.sidebar.divider()
+
+# Lifestyle Factors (For Radar Plot interaction)
+with st.sidebar.expander("Lifestyle and Prevention"):
+    st.write("These factors influence the Radar Plot and long-term risk profile.")
+    phys_act = st.slider("Physical Activity (hrs/week)", 0.0, 10.0, float(defaults['PhysicalActivity']))
+    sleep_qual = st.slider("Sleep Quality (Rating 0-10)", 0.0, 10.0, float(defaults['SleepQuality']))
+    diet_qual = st.slider("Diet Quality (Rating 0-10)", 0.0, 10.0, float(defaults['DietQuality']))
 
 # 6. Building the Input DataFrame
-# Start with a copy of all defaults
 patient_data = defaults.copy()
-
-# Update only the values modified by the user
 patient_data.update({
     'MMSE': mmse,
     'FunctionalAssessment': func_ast,
     'ADL': adl,
     'Age': age,
     'MemoryComplaints': memory,
-    'BehavioralProblems': behavior
+    'BehavioralProblems': behavior,
+    'PhysicalActivity': phys_act,
+    'SleepQuality': sleep_qual,
+    'DietQuality': diet_qual
 })
 
-# Convert to DataFrame (The pipeline handles the rest!)
 input_df = pd.DataFrame([patient_data])
 
 # 7. Prediction Display
@@ -118,7 +141,6 @@ col1, col2 = st.columns([1, 1])
 
 with col1:
     if st.button("Generate Prediction", type="primary"):
-        # Calculate probability and class
         probability = pipeline.predict_proba(input_df)[0][1]
         prediction = pipeline.predict(input_df)[0]
 
@@ -133,7 +155,6 @@ with col1:
 with col2:
     st.write("**Prediction Explanation (SHAP):**")
     
-    # 1. Preparazione dati (Trasformazione tramite il preprocessor della pipeline)
     model_step = pipeline.named_steps['model']
     preprocessor_step = pipeline.named_steps['preprocessor']
     
@@ -141,14 +162,11 @@ with col2:
     feature_names = preprocessor_step.get_feature_names_out()
     input_transformed_df = pd.DataFrame(input_transformed, columns=feature_names)
     
-    # 2. Calcolo SHAP
     explainer = shap.TreeExplainer(model_step)
     shap_values = explainer.shap_values(input_transformed_df)
     
-    # Gestione output LightGBM (selezioniamo la classe 1: Alzheimer)
     sv = shap_values[1] if isinstance(shap_values, list) else shap_values
     
-    # 3. Grafico Waterfall
     fig_shap, ax_shap = plt.subplots(figsize=(10, 5))
     shap.plots.waterfall(shap.Explanation(
         values=sv[0], 
@@ -174,7 +192,8 @@ with c_info:
         - **MMSE:** Cognitive test (0-30). Lower scores indicate higher impairment.
         - **ADL:** Activities of Daily Living. Measures independence in daily tasks.
         - **Functional Assessment:** Evaluation of lifestyle management.
-        - **SHAP:** Values to the right (red) increase risk; values to the left (blue) decrease it.
+        - **Lifestyle Factors:** Physical Activity, Sleep, and Diet are modifiable risks.
+        - **SHAP:** Red bars increase predicted risk; blue bars decrease it.
         """)
 
-st.caption("Baseline Model with XAI Integration- This tool is for portfolio purposes and should not be used for real clinical decisions.")
+st.caption("Baseline Model with XAI Integration - This tool is for portfolio purposes and should not be used for real clinical decisions.")
