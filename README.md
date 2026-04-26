@@ -1,3 +1,13 @@
+---
+title: Neurodiagnostics Clinical Support
+emoji: 🧠
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 8501
+pinned: false
+---
+
 #  NeuroDiagnostics-AD: Alzheimer’s Disease Prediction Pipeline
 
 This repository hosts a comprehensive Machine Learning pipeline designed to support the early detection of Alzheimer's Disease. By combining high-performance ensemble methods with Explainable AI (XAI), this project provides a robust framework for clinical decision support.
