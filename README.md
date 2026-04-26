@@ -27,7 +27,7 @@ The project is structured into four specialized phases:
 
 Experience the diagnostic pipeline through the dedicated Streamlit application. This dashboard allows for real-time risk assessment and feature impact visualization.
 
- [**Access the Alzheimer's Diagnosis Dashboard**](https://neurodiagnosticsclinicalsupportsystemforalzheimersprediction-4.streamlit.app/)
+ [**Access the Alzheimer's Diagnosis Dashboard**](https://lslidia-demo-alz.hf.space)
 
 ### Key Features:
 * **Patient Profile vs. Average:** Interactive radar charts comparing user input with statistical population benchmarks.
